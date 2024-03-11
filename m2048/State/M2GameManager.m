@@ -95,11 +95,11 @@ BOOL iterate(NSInteger value, BOOL countUp, NSInteger upper, NSInteger lower) {
   
   if (direction == M2DirectionUp || direction == M2DirectionDown) {
     [_grid forEach:^(M2Position position) {
-      if ((tile = [_grid tileAtPosition:position])) {
+      if ((tile = [self->_grid tileAtPosition:position])) {
         // Find farthest position to move to.
         NSInteger target = position.x;
-        for (NSInteger i = position.x + unit; iterate(i, reverse, _grid.dimension, -1); i += unit) {
-          M2Tile *t = [_grid tileAtPosition:M2PositionMake(i, position.y)];
+        for (NSInteger i = position.x + unit; iterate(i, reverse, self->_grid.dimension, -1); i += unit) {
+          M2Tile *t = [self->_grid tileAtPosition:M2PositionMake(i, position.y)];
           
           // Empty cell; we can move at least to here.
           if (!t) target = i;
@@ -110,7 +110,7 @@ BOOL iterate(NSInteger value, BOOL countUp, NSInteger upper, NSInteger lower) {
             
             if (GSTATE.gameType == M2GameTypePowerOf3) {
               M2Position further = M2PositionMake(i + unit, position.y);
-              M2Tile *ft = [_grid tileAtPosition:further];
+              M2Tile *ft = [self->_grid tileAtPosition:further];
               if (ft) {
                 level = [tile merge3ToTile:t andTile:ft];
               }
@@ -120,7 +120,7 @@ BOOL iterate(NSInteger value, BOOL countUp, NSInteger upper, NSInteger lower) {
             
             if (level) {
               target = position.x;
-              _pendingScore = [GSTATE valueForLevel:level];
+              self->_pendingScore = [GSTATE valueForLevel:level];
             }
 
             break;
@@ -129,8 +129,8 @@ BOOL iterate(NSInteger value, BOOL countUp, NSInteger upper, NSInteger lower) {
         
         // The current tile is movable.
         if (target != position.x) {
-          [tile moveToCell:[_grid cellAtPosition:M2PositionMake(target, position.y)]];
-          _pendingScore++;
+          [tile moveToCell:[self->_grid cellAtPosition:M2PositionMake(target, position.y)]];
+          self->_pendingScore++;
         }
       }
     } reverseOrder:reverse];
@@ -138,10 +138,10 @@ BOOL iterate(NSInteger value, BOOL countUp, NSInteger upper, NSInteger lower) {
   
   else {
     [_grid forEach:^(M2Position position) {
-      if ((tile = [_grid tileAtPosition:position])) {
+      if ((tile = [self->_grid tileAtPosition:position])) {
         NSInteger target = position.y;
-        for (NSInteger i = position.y + unit; iterate(i, reverse, _grid.dimension, -1); i += unit) {
-          M2Tile *t = [_grid tileAtPosition:M2PositionMake(position.x, i)];
+        for (NSInteger i = position.y + unit; iterate(i, reverse, self->_grid.dimension, -1); i += unit) {
+          M2Tile *t = [self->_grid tileAtPosition:M2PositionMake(position.x, i)];
           
           if (!t) target = i;
 
@@ -150,7 +150,7 @@ BOOL iterate(NSInteger value, BOOL countUp, NSInteger upper, NSInteger lower) {
             
             if (GSTATE.gameType == M2GameTypePowerOf3) {
               M2Position further = M2PositionMake(position.x, i + unit);
-              M2Tile *ft = [_grid tileAtPosition:further];
+              M2Tile *ft = [self->_grid tileAtPosition:further];
               if (ft) {
                 level = [tile merge3ToTile:t andTile:ft];
               }
@@ -160,7 +160,7 @@ BOOL iterate(NSInteger value, BOOL countUp, NSInteger upper, NSInteger lower) {
             
             if (level) {
               target = position.y;
-              _pendingScore = [GSTATE valueForLevel:level];
+              self->_pendingScore = [GSTATE valueForLevel:level];
             }
             
             break;
@@ -169,8 +169,8 @@ BOOL iterate(NSInteger value, BOOL countUp, NSInteger upper, NSInteger lower) {
         
         // The current tile is movable.
         if (target != position.y) {
-          [tile moveToCell:[_grid cellAtPosition:M2PositionMake(position.x, target)]];
-          _pendingScore++;
+          [tile moveToCell:[self->_grid cellAtPosition:M2PositionMake(position.x, target)]];
+          self->_pendingScore++;
         }
       }
     } reverseOrder:reverse];
@@ -181,10 +181,10 @@ BOOL iterate(NSInteger value, BOOL countUp, NSInteger upper, NSInteger lower) {
   
   // Commit tile movements.
   [_grid forEach:^(M2Position position) {
-    M2Tile *tile = [_grid tileAtPosition:position];
+    M2Tile *tile = [self->_grid tileAtPosition:position];
     if (tile) {
       [tile commitPendingActions];
-      if (tile.level >= GSTATE.winningLevel) _won = YES;
+      if (tile.level >= GSTATE.winningLevel) self->_won = YES;
     }
   } reverseOrder:reverse];
   

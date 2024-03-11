@@ -11,7 +11,7 @@
 #import "M2Tile.h"
 #import "M2Cell.h"
 
-typedef void (^M2Block)();
+typedef void (^M2Block)(void);
 
 @implementation M2Tile {
   /** The value of the tile, as some text. */
@@ -93,10 +93,10 @@ typedef void (^M2Block)();
 
 - (void)commitPendingActions {
   [self runAction:[SKAction sequence:_pendingActions] completion:^{
-    [_pendingActions removeAllObjects];
-    if (_pendingBlock) {
-      _pendingBlock();
-      _pendingBlock = nil;
+    [self->_pendingActions removeAllObjects];
+    if (self->_pendingBlock) {
+      self->_pendingBlock();
+      self->_pendingBlock = nil;
     }
   }];
 }

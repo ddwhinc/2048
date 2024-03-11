@@ -169,8 +169,8 @@
   _overlay.center = CGPointMake(GSTATE.horizontalOffset + side / 2, verticalOffset - side / 2);
   
   [UIView animateWithDuration:0.5 delay:1.5 options:UIViewAnimationOptionCurveEaseInOut animations:^{
-    _overlay.alpha = 1;
-    _overlayBackground.alpha = 1;
+    self->_overlay.alpha = 1;
+    self->_overlayBackground.alpha = 1;
   } completion:^(BOOL finished) {
     // Freeze the current game.
     ((SKView *)self.view).paused = YES;
@@ -183,11 +183,11 @@
   ((SKView *)self.view).paused = NO;
   if (!_overlay.hidden) {
     [UIView animateWithDuration:0.5 animations:^{
-      _overlay.alpha = 0;
-      _overlayBackground.alpha = 0;
+      self->_overlay.alpha = 0;
+      self->_overlayBackground.alpha = 0;
     } completion:^(BOOL finished) {
-      _overlay.hidden = YES;
-      _overlayBackground.hidden = YES;
+      self->_overlay.hidden = YES;
+      self->_overlayBackground.hidden = YES;
     }];
   }
 }
